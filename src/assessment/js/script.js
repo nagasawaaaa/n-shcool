@@ -15,6 +15,13 @@
     }
   }
 
+  userNameInput.onkeydown = (event) => {
+    if(event.keyCode === 13) {
+      assessmentButton.onclick();
+    }
+  }
+
+
   assessmentButton.onclick = () => {
     const userName = userNameInput.value;
     if(userName.length === 0) { // 名前が空の時は処理を終了する
@@ -29,9 +36,25 @@
     resultDivided.appendChild(header);
 
     const paragraph = document.createElement('p');
-    const  result = assessment(userName);
+    const result = assessment(userName);
     paragraph.innerText = result;
     resultDivided.appendChild(paragraph);
+
+    // Tweet 機能
+    removeAllChildren(tweetDivided);
+    const anchor = document.createElement('a');
+    const hrefValue = 'https://twitter.com/intent/tweet?button_hashtag='
+      + encodeURIComponent('あなたのいいところ')
+      + '&ref_src=twsrc%5Etfw';
+    anchor.setAttribute('href',hrefValue);
+    anchor.className = 'twitter-hashtag-button';
+    anchor.setAttribute('data-text', result);
+    anchor.setAttribute('data-lang', 'ja');
+    anchor.setAttribute('data-show-count', 'false');
+    anchor.innerText = 'あなたのいいところ をツイートする';
+    tweetDivided.appendChild(anchor);
+
+    twttr.widgets.load();
   }
 
   const answers = [
@@ -72,7 +95,6 @@
 
     result = result.replace(/\{userName\}/g, userName);
 
-    // TODO {userName} をユーザーの名前に置き換える
     return result;
   }
 
@@ -81,5 +103,6 @@
     assessment('太郎') === assessment('太郎'),
     '診断結果の文言の特定の部分を名前に置き換える処理が正しくありません。'
   );
+
 
 })();
